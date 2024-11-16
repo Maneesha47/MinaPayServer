@@ -1,2 +1,8 @@
-# MinaPayServer
-Mina server for Ethglobal Bangkok 2024
+```
+npm install
+npm run dev
+```
+
+```
+open http://localhost:3000
+```
