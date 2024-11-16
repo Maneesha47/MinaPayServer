@@ -1,22 +1,20 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import 'dotenv/config'
 // import db from './db/dbhelper.js'
 import db from './db/helperv2.js'
 import { generateKeyPair } from './utils/mina.js'
+import { transpilePage } from './utils/transpiler.js'
 
 const app = new Hono()
 
 app.use('/*', cors())
-
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-app.post('/trsage', async (c) => {
-  const body = await c.req.json()
-  return c.json({ success: true, })
-})
+app.post("/api/parsePage", async (c) => {
+  const body = await c.req.json();
+  const result = await transpilePage(body.apiUrl);
+  return c.json({ success: true, message: result });
+});
 
 app.post("/api/get/address", async (c) => {
   const body = await c.req.json()

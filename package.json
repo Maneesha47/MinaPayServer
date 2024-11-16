@@ -6,7 +6,10 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
     "hono": "^4.6.10",
+    "ky": "^1.7.2",
     "o1js": "^2.1.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
