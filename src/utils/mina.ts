@@ -1,7 +1,8 @@
 import {  
     PrivateKey,
     Poseidon,
-    Field
+    Field,
+    Mina
 } from 'o1js'
 
 export function generateKeyPair() {

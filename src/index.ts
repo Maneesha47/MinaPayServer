@@ -28,7 +28,7 @@ app.post("/api/get/address", async (c) => {
 
   const keyPair = generateKeyPair()
 
-  await db.run('INSERT INTO users (username,name, email, private_key, address) VALUES (?, ?, ?,?, ?)', 
+  await db.run('INSERT INTO users (tokens, username,name, email, private_key, address) VALUES (100, ?, ?, ?,?, ?)', 
   username, name||"" , email || "", keyPair.privateKey.toBase58(), keyPair.publicKey.toBase58())
 
   return c.json({ success: true, user : {
@@ -36,6 +36,48 @@ app.post("/api/get/address", async (c) => {
     private_key : keyPair.privateKey.toBase58(),
     address : keyPair.publicKey.toBase58()
   } }, 201)
+})
+
+app.post("/api/pay", async (c) => {
+  const body = await c.req.json()
+  const { from, to, amount } = body
+
+  const fromUser = await db.get('SELECT * FROM users WHERE username = ?', from)
+  if (!fromUser) {
+    return c.json({ err : "From does not exist" }, 400)
+  }
+
+  let toUser = await db.get('SELECT * FROM users WHERE username = ?', to)
+  if (!toUser) {
+    const keyPair = generateKeyPair()
+    await db.run('INSERT INTO users (tokens, username,name, email, private_key, address) VALUES (100, ?, ?, ?,?, ?)', 
+      to, "" , "", keyPair.privateKey.toBase58(), keyPair.publicKey.toBase58())
+  }
+
+  toUser = await db.get('SELECT * FROM users WHERE username = ?', to)
+  if (!toUser) {
+    return c.json({ err : "From does not exist" }, 400)
+  }
+
+
+  fromUser.tokens = fromUser.tokens - amount
+  toUser.tokens = toUser.tokens + amount
+  
+
+  await db.run(`
+    UPDATE users
+    SET tokens = ?
+    WHERE username = ?
+    `, fromUser.tokens,fromUser.username )
+
+  await db.run(`
+      UPDATE users
+      SET tokens = ?
+      WHERE username = ?
+      `, toUser.tokens,toUser.username )
+  
+
+
 })
 
 const port = 3000

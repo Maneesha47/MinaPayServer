@@ -8,7 +8,8 @@ CREATE TABLE Users (
   name       TEXT    ,
   email       TEXT    ,
   address TEXT NOT NULL,
-  private_key TEXT NOT NULL
+  private_key TEXT NOT NULL,
+  tokens INTEGER NOT NULL
 );
 
 --------------------------------------------------------------------------------
